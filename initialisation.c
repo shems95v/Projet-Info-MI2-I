@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "cardyard.h"
+#include "cartes.h"
 
 // Crée et mélange la pioche
 
