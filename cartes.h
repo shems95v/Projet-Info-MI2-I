@@ -1,5 +1,7 @@
-#ifndef CARDYARD_H
-#define CARDYARD_H
+// cartes.h
+
+#ifndef CARTES_H
+#define CARTES_H
 
 #define MAX_JOUEURS 8
 #define MAX_CARTES_MAIN 12
