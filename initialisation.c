@@ -1,27 +1,20 @@
-// initialisation.c
-
+// === initialisation.c ===
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "cartes.h"
 
-// Crée et mélange la pioche
-
 void initialiser_pioche(Pioche *pioche) {
     int index = 0;
-
     for (int i = 0; i < 5; i++) pioche->cartes[index++] = (Carte){-2, 0};
     for (int i = 0; i < 10; i++) pioche->cartes[index++] = (Carte){-1, 0};
     for (int i = 0; i < 15; i++) pioche->cartes[index++] = (Carte){0, 0};
     for (int val = 1; val <= 12; val++)
         for (int i = 0; i < 10; i++)
             pioche->cartes[index++] = (Carte){val, 0};
-
     pioche->sommet = index;
 
-    // Mélange de la pioche
-  
     srand(time(NULL));
     for (int i = 0; i < pioche->sommet; i++) {
         int r = rand() % pioche->sommet;
@@ -30,8 +23,6 @@ void initialiser_pioche(Pioche *pioche) {
         pioche->cartes[r] = temp;
     }
 }
-
-// Distribue les cartes aux joueurs
 
 void distribuer_cartes(Joueur joueurs[], int nbJoueurs, Pioche *pioche, int cartesParJoueur) {
     for (int j = 0; j < nbJoueurs; j++) {
