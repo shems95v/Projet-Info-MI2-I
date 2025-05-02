@@ -1,15 +1,14 @@
-// cartes.h
-
+// === cartes.h ===
 #ifndef CARTES_H
 #define CARTES_H
 
 #define MAX_JOUEURS 8
 #define MAX_CARTES_MAIN 12
-#define TAILLE_DECK 150
+#define TAILLE_DECK 200
 
 typedef struct {
     int valeur;
-    int visible; // 0 = face cachée, 1 = face visible
+    int visible;
 } Carte;
 
 typedef struct {
@@ -18,6 +17,7 @@ typedef struct {
     int tailleMain;
     Carte defausse[MAX_CARTES_MAIN];
     int sommetDefausse;
+    int score;
 } Joueur;
 
 typedef struct {
