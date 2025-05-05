@@ -13,29 +13,38 @@ void afficher_nom_centre(const char *nom, int nbCartes) {
     printf("%s\n", nom);
 }
 
-// Une ligne de carte
 void afficher_carte_ligne(Carte carte, int ligne) {
     if (carte.visible) {
-        // Carte visible en couleurs
         char *couleurTexte, *couleurFond;
         switch (carte.valeur) {
-            case -2: couleurTexte = NOIR; couleurFond = BG_MAGENTA; break;
-            case -1: couleurTexte = BLANC; couleurFond = BG_MAGENTA; break;
-            case 0:  couleurTexte = NOIR; couleurFond = BG_BLEU; break;
-            case 4:  couleurTexte = NOIR; couleurFond = BG_VERT; break;
-            case 8:  couleurTexte = NOIR; couleurFond = BG_JAUNE; break;
-            case 12: couleurTexte = BLANC; couleurFond = BG_ROUGE; break;
-            default: couleurTexte = BLANC; couleurFond = BG_NOIR; break;
+            case -2:  couleurTexte = BLANC; couleurFond = "\x1b[48;5;52m";  break;
+            case -1:  couleurTexte = BLANC; couleurFond = "\x1b[48;5;130m"; break;
+            case 0:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;226m"; break;
+            case 1:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;118m"; break;
+            case 2:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;33m";  break;
+            case 3:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;208m"; break;
+            case 4:   couleurTexte = BLANC; couleurFond = "\x1b[48;5;129m"; break;
+            case 5:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;181m"; break;
+            case 6:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;44m";  break;
+            case 7:   couleurTexte = BLANC; couleurFond = "\x1b[48;5;160m"; break;
+            case 8:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;123m"; break;
+            case 9:   couleurTexte = NOIR;  couleurFond = "\x1b[48;5;210m"; break;
+            case 10:  couleurTexte = BLANC; couleurFond = "\x1b[48;5;25m";  break;
+            case 11:  couleurTexte = BLANC; couleurFond = "\x1b[48;5;34m";  break;
+            case 12:  couleurTexte = NOIR;  couleurFond = "\x1b[48;5;220m"; break;
+            default:  couleurTexte = BLANC; couleurFond = BG_NOIR;          break;
         }
-
+    
         if (ligne == 0)
             printf("┌──────────┐ ");
         else if (ligne == 1)
-            printf("│%s%s   %2d    %s│ ", couleurFond, couleurTexte, carte.valeur, RESET);
+            printf("│%s%s   %2d   %s  │ ", couleurFond, couleurTexte, carte.valeur, RESET);
         else if (ligne == 2)
             printf("└──────────┘ ");
-    } else {
-        // Carte cachée
+    }
+    
+    else {
+        // Carte non visible : style classique
         if (ligne == 0)
             printf("┌──────────┐ ");
         else if (ligne == 1)
@@ -44,6 +53,7 @@ void afficher_carte_ligne(Carte carte, int ligne) {
             printf("└──────────┘ ");
     }
 }
+
 
 // Affiche la dernière carte de la défausse (ou vide)
 void afficher_defausse(Carte *defausse, int sommet) {
