@@ -70,7 +70,7 @@ Elle est générée automatiquement si le joueur choisit l’option "Sauvegarder
 ## 👨‍💻 Auteurs
 
 Projet réalisé par :  
-**Shems BOUDJEBINA**, **Antoine BOUDON-GUILLOT**, **Taissir Rguig**  
+**Shems BOUDJEBINA**, **Antoine BOUDON-GUILLOT**, **Taissir RGUIG**  
 Dans le cadre du module de programmation système en C — année universitaire **2024–2025**.
 
 ---
