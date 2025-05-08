@@ -149,10 +149,29 @@ int main() {
                 joueurs[i].defausse[joueurs[i].sommetDefausse++] = tmp;
             }
 
-            if (toutes_cartes_visibles(joueurs[i]) && joueur_ayant_termine == -1) {
-                joueur_ayant_termine = i;
-                printf("%s a retourné toutes ses cartes ! Dernier tour pour les autres.\n", joueurs[i].nom);
+            if (toutes_cartes_visibles(joueurs[i])) {
+                printf("%s a retourné toutes ses cartes ! Fin de la partie.\n", joueurs[i].nom);
+            
+                // Rendre toutes les cartes visibles
+                for (int j = 0; j < nbJoueurs; j++) {
+                    for (int c = 0; c < joueurs[j].tailleMain; c++) {
+                        joueurs[j].main[c].visible = 1;
+                    }
+                }
+            
+                // Affichage final
+                afficher_plateau(joueurs, nbJoueurs, &pioche);
+            
+                // Affichage des scores triés
+                afficher_scores_tries(joueurs, nbJoueurs);
+            
+                // Terminer immédiatement la partie
+                return 0;
             }
+            
+            
+            
+            
         }
         if (joueur_ayant_termine != -1) partie_terminee = 1;
     }
