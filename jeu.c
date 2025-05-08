@@ -34,25 +34,21 @@ void afficher_carte_ligne(Carte carte, int ligne) {
             case 12:  couleurTexte = NOIR;  couleurFond = "\x1b[48;5;220m"; break;
             default:  couleurTexte = BLANC; couleurFond = BG_NOIR;          break;
         }
-    
-        if (ligne == 0)
-            printf("┌──────────┐ ");
-        else if (ligne == 1)
-            printf("│%s%s   %2d   %s  │ ", couleurFond, couleurTexte, carte.valeur, RESET);
-        else if (ligne == 2)
-            printf("└──────────┘ ");
-    }
-    
-    else {
-        // Carte non visible : style classique
-        if (ligne == 0)
-            printf("┌──────────┐ ");
-        else if (ligne == 1)
-            printf("│ CARD YARD│ ");
-        else if (ligne == 2)
-            printf("└──────────┘ ");
+
+        switch (ligne) {
+            case 0: printf("╭────────────╮ "); break;
+            case 1: printf("│%s%s    %2d     %s │ ", couleurFond, couleurTexte, carte.valeur, RESET); break;
+            case 2: printf("╰────────────╯ "); break;
+        }
+    } else {
+        switch (ligne) {
+            case 0: printf("╭────────────╮ "); break;
+            case 1: printf("│  CARD YARD │ "); break;
+            case 2: printf("╰────────────╯ "); break;
+        }
     }
 }
+
 
 
 // Affiche la dernière carte de la défausse (ou vide)
