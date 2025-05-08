@@ -23,7 +23,6 @@
 #define BG_CYAN     "\x1b[46m"
 #define BG_BLANC    "\x1b[47m"
 
-void afficher_carte_colorée(Carte carte);
 void afficher_plateau(Joueur joueurs[], int nbJoueurs, Pioche *pioche);
 void afficher_scores_tries(Joueur joueurs[], int nbJoueurs);
 
