@@ -38,6 +38,14 @@ make mrproper
 
 - Jusqu'à **8 joueurs**
 - **Distribution aléatoire ou personnalisée** des cartes
+- **3 variantes pour générer la pioche** :
+
+  **VALUE_FILE** : lit les valeurs et quantités de cartes depuis un fichier texte (valeurs.txt)
+
+  **VALUE_USER** : l’utilisateur entre lui-même la plage de valeurs (ex. -5 à 15) et les quantités de chaque carte
+
+  **Par défaut** : jeu classique avec les cartes proposées dans le sujet (valeurs de -2 à 12)
+
 - **Sauvegarde** et **rechargement** d’une partie en cours (`sauvegarde.txt`)
 - **Affichage visuel stylisé** des cartes et du plateau via **codes couleurs ANSI**
 - **Classement final automatique** des joueurs par score
