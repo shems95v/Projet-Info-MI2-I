@@ -1,44 +1,27 @@
-# === Makefile pour CardYard ===
+# === Makefile ===
 
-# Compilateur utilisé
+# Nom du compilateur utilisé
 CC = gcc
 
 # Options de compilation :
-# -Wall : active tous les avertissements courants
+# -Wall : active tous les avertissements standards
 # -Wextra : active des avertissements supplémentaires
-# -std=c99 : utilise la norme C99
+# -std=c99 : utilise le standard C99
 CFLAGS = -Wall -Wextra -std=c99
 
-# Options de l’éditeur de liens (ici vide, peut servir pour -lm, -lSDL2, etc.)
-LDFLAGS =
+# Liste des fichiers objets à compiler (issus des .c)
+OBJS = main.o affichage.o initialisation.o jeu.o
 
-# Liste des fichiers sources
-SRC = main.c affichage.c initialisation.c jeu.c
+# Cible principale : génère l'exécutable 'cardyard' à partir des fichiers objets
+cardyard: $(OBJS)
+	$(CC) $(CFLAGS) -o cardyard $(OBJS)
 
-# Transformation des fichiers sources .c en objets .o
-OBJ = $(SRC:.c=.o)
-
-# Nom de l’exécutable final
-EXEC = cardyard
-
-# Cible par défaut : génère l’exécutable
-all: $(EXEC)
-
-# Cible pour créer l'exécutable à partir des fichiers objets
-$(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
-
-# Règle de compilation des fichiers .c vers .o
+# Règle générique pour compiler chaque .c en .o
+# $< : nom du fichier source (.c)
+# $@ : nom du fichier objet (.o)
 %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Cible pour supprimer les fichiers objets
+# Cible 'clean' : supprime l'exécutable et tous les fichiers objets générés
 clean:
-	rm -f *.o
-
-# Cible pour tout nettoyer : objets + exécutable
-mrproper: clean
-	rm -f $(EXEC)
-
-# Spécifie que ces cibles ne sont pas des fichiers
-.PHONY: all clean mrproper
+	rm -f cardyard *.o
