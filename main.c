@@ -6,11 +6,13 @@
 #include "cartes.h"
 #include "affichage.h"
 
-// Prototypes des fonctions d'initialisation (définies ailleurs)
+// Prototypes des fonctions d'initialisation
 void initialiser_pioche(Pioche *pioche);
+void initialiser_pioche_from_file(Pioche *pioche, const char *filename);
+void initialiser_pioche_from_user(Pioche *pioche);
 void distribuer_cartes(Joueur joueurs[], int nbJoueurs, Pioche *pioche, int cartesParJoueur);
 
-// Vérifie si toutes les cartes d'un joueur sont visibles (condition de fin de partie)
+// Vérifie si toutes les cartes d'un joueur sont visibles (retournées)
 int toutes_cartes_visibles(Joueur j) {
     for (int i = 0; i < j.tailleMain; i++) {
         if (!j.main[i].visible) return 0;
@@ -18,12 +20,13 @@ int toutes_cartes_visibles(Joueur j) {
     return 1;
 }
 
-// Sauvegarde l’état complet de la partie dans un fichier texte
+// Sauvegarde l'état actuel de la partie dans un fichier texte
 void sauvegarder_partie(Joueur joueurs[], int nbJoueurs, Pioche *pioche, int cartesParJoueur) {
     FILE *f = fopen("sauvegarde.txt", "w");
     if (!f) return;
 
-    fprintf(f, "%d %d\n", nbJoueurs, cartesParJoueur); // En-tête : nb de joueurs et cartes/joueur
+    // Sauvegarde des infos générales
+    fprintf(f, "%d %d\n", nbJoueurs, cartesParJoueur);
     for (int i = 0; i < nbJoueurs; i++) {
         fprintf(f, "%s\n", joueurs[i].nom);
         for (int j = 0; j < cartesParJoueur; j++)
@@ -33,6 +36,7 @@ void sauvegarder_partie(Joueur joueurs[], int nbJoueurs, Pioche *pioche, int car
             fprintf(f, "%d %d\n", joueurs[i].defausse[j].valeur, joueurs[i].defausse[j].visible);
     }
 
+    // Sauvegarde de la pioche
     fprintf(f, "%d\n", pioche->sommet);
     for (int i = 0; i < pioche->sommet; i++)
         fprintf(f, "%d %d\n", pioche->cartes[i].valeur, pioche->cartes[i].visible);
@@ -40,11 +44,12 @@ void sauvegarder_partie(Joueur joueurs[], int nbJoueurs, Pioche *pioche, int car
     fclose(f);
 }
 
-// Recharge une partie précédemment sauvegardée
+// Charge une partie précédemment sauvegardée
 int charger_partie(Joueur joueurs[], int *nbJoueurs, Pioche *pioche, int *cartesParJoueur) {
     FILE *f = fopen("sauvegarde.txt", "r");
     if (!f) return 0;
 
+    // Lecture des données de la sauvegarde
     fscanf(f, "%d %d", nbJoueurs, cartesParJoueur);
     for (int i = 0; i < *nbJoueurs; i++) {
         fscanf(f, "%s", joueurs[i].nom);
@@ -63,6 +68,7 @@ int charger_partie(Joueur joueurs[], int *nbJoueurs, Pioche *pioche, int *cartes
     return 1;
 }
 
+// === Fonction principale du programme ===
 int main() {
     Joueur joueurs[MAX_JOUEURS];
     Pioche pioche;
@@ -73,25 +79,25 @@ int main() {
     scanf("%d", &choix);
 
     if (choix == 2) {
-        // Chargement d'une partie sauvegardée
+        // Reprise d'une partie sauvegardée
         if (!charger_partie(joueurs, &nbJoueurs, &pioche, &cartesParJoueur)) {
             printf("Échec du chargement.\n");
             return 1;
         }
     } else {
-        // Configuration d'une nouvelle partie
+        // Création d'une nouvelle partie
         do {
             printf("Nombre de joueurs (2-8) : ");
             scanf("%d", &nbJoueurs);
         } while (nbJoueurs < 2 || nbJoueurs > MAX_JOUEURS);
 
-        // Entrée des noms
+        // Demande des noms
         for (int i = 0; i < nbJoueurs; i++) {
             printf("Nom du joueur %d : ", i+1);
             scanf("%s", joueurs[i].nom);
         }
 
-        // Sélection du nombre de cartes par joueur
+        // Choix du nombre de cartes par joueur
         printf("Nombre de cartes par joueur ?\n1. Par défaut (6)\n2. Choix manuel\n3. Aléatoire\nChoix : ");
         scanf("%d", &choix);
         if (choix == 2) {
@@ -104,34 +110,46 @@ int main() {
             cartesParJoueur = 4 + rand() % 5; // entre 4 et 8
         }
 
-        // Initialisation du jeu
-        initialiser_pioche(&pioche);
+        // Choix de la variante de pioche
+        printf("Choix de la variante pour la pioche :\n");
+        printf("1. Valeurs par défaut\n");
+        printf("2. Charger depuis un fichier (VALUE_FILE)\n");
+        printf("3. Entrer manuellement les valeurs (VALUE_USER)\n");
+        printf("Votre choix : ");
+        int variante;
+        scanf("%d", &variante);
+
+        if (variante == 2) {
+            initialiser_pioche_from_file(&pioche, "valeurs.txt");
+        } else if (variante == 3) {
+            initialiser_pioche_from_user(&pioche);
+        } else {
+            initialiser_pioche(&pioche);
+        }
+
         distribuer_cartes(joueurs, nbJoueurs, &pioche, cartesParJoueur);
     }
 
-    // Boucle principale du jeu
     int partie_terminee = 0;
     int joueur_ayant_termine = -1;
 
+    // Boucle principale du jeu
     while (!partie_terminee) {
         for (int i = 0; i < nbJoueurs; i++) {
-            // Si un joueur a terminé, on saute son tour
             if (joueur_ayant_termine != -1 && i == joueur_ayant_termine) continue;
 
-            // Affichage du plateau
             afficher_plateau(joueurs, nbJoueurs, &pioche);
-
-            // Tour du joueur
             printf("%s, choisissez :\n1. Piocher\n2. Prendre défausse\n3. Sauvegarder et quitter\n> ", joueurs[i].nom);
             scanf("%d", &choix);
 
+            // Sauvegarde et sortie
             if (choix == 3) {
                 sauvegarder_partie(joueurs, nbJoueurs, &pioche, cartesParJoueur);
                 printf("Partie sauvegardée.\n");
                 return 0;
             }
 
-            // Carte choisie depuis la pioche ou la défausse d’un autre joueur
+            // Pioche ou prise depuis une défausse
             Carte carte;
             if (choix == 1) {
                 if (pioche.sommet == 0) {
@@ -151,46 +169,35 @@ int main() {
                 continue;
             }
 
-            // Action : échanger ou poser dans sa défausse
+            // Choix de l'action avec la carte tirée
             printf("Carte : %d\nÉchanger avec quelle carte (0-%d) ou -1 pour poser en défausse ? ", carte.valeur, cartesParJoueur-1);
             int idx;
             scanf("%d", &idx);
 
             if (idx == -1) {
-                // Défausse la carte sans échange
                 joueurs[i].defausse[joueurs[i].sommetDefausse++] = carte;
             } else if (idx >= 0 && idx < cartesParJoueur) {
-                // Échange avec une carte de la main
                 Carte tmp = joueurs[i].main[idx];
                 joueurs[i].main[idx] = carte;
                 joueurs[i].main[idx].visible = 1;
                 joueurs[i].defausse[joueurs[i].sommetDefausse++] = tmp;
             }
 
-            // Fin de partie : toutes les cartes du joueur sont visibles
+            // Fin immédiate si toutes les cartes du joueur sont retournées
             if (toutes_cartes_visibles(joueurs[i])) {
                 printf("%s a retourné toutes ses cartes ! Fin de la partie.\n", joueurs[i].nom);
-
-                // Rendre toutes les cartes visibles pour tout le monde
                 for (int j = 0; j < nbJoueurs; j++) {
                     for (int c = 0; c < joueurs[j].tailleMain; c++) {
                         joueurs[j].main[c].visible = 1;
                     }
                 }
-
-                // Affichage final du plateau et des scores
                 afficher_plateau(joueurs, nbJoueurs, &pioche);
                 afficher_scores_tries(joueurs, nbJoueurs);
                 return 0;
             }
         }
-
-        // Si un joueur avait déjà terminé au tour précédent, on sort de la boucle
-        if (joueur_ayant_termine != -1)
-            partie_terminee = 1;
     }
 
-    // Affichage final si la boucle s’est terminée autrement
     afficher_scores_tries(joueurs, nbJoueurs);
     printf("Fin de partie !\n");
     return 0;
